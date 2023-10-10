@@ -13,12 +13,16 @@ class CNN(nn.Module):
             self.model = vgg.vgg19_bn(**kwargs)
         elif backbone == 'resnet50':
             self.model = Resnet50(**kwargs)
-        elif backbone == 'timm_backone':
+        elif backbone == 'timm_backbone':
             # print('timm')
             self.model = timm.create_model(**kwargs)
+        self.backbone = backbone
 
     def forward(self, x):
-        return self.model(x)
+        if self.backbone == 'timm_backbone':
+            return self.model.forward_features(x)
+        else:
+            return self.model(x)
 
     def freeze(self):
         for name, param in self.model.features.named_parameters():
@@ -28,3 +32,4 @@ class CNN(nn.Module):
     def unfreeze(self):
         for param in self.model.features.parameters():
             param.requires_grad = True
+
