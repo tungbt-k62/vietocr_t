@@ -14,7 +14,7 @@ class CNN(nn.Module):
         elif backbone == 'resnet50':
             self.model = Resnet50(**kwargs)
         elif backbone == 'timm_backone':
-            print('timm')
+            # print('timm')
             self.model = timm.create_model(**kwargs)
 
     def forward(self, x):
