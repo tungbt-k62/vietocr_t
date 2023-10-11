@@ -11,7 +11,7 @@ class VietOCR(nn.Module):
                  transformer_args, seq_modeling='transformer'):
         
         super(VietOCR, self).__init__()
-        self.bb_name = backbone
+        # self.bb_name = backbone
         self.cnn = CNN(backbone, **cnn_args)
         self.seq_modeling = seq_modeling
 
@@ -35,10 +35,10 @@ class VietOCR(nn.Module):
         # print(img.shape)
         src = self.cnn(img)
         # print(src.shape)
-        if self.bb_name == "timm_backbone":
-            src = src.transpose(-1, -2)
-            src = src.flatten(2)
-            src = src.permute(-1, 0, 1)
+        # if self.bb_name == "timm_backbone":
+        #     src = src.transpose(-1, -2)
+        #     src = src.flatten(2)
+        #     src = src.permute(-1, 0, 1)
         # print(src.shape)
         if self.seq_modeling == 'transformer':
             outputs = self.transformer(src, tgt_input, tgt_key_padding_mask=tgt_key_padding_mask)
