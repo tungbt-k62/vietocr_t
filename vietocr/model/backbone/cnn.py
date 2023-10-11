@@ -1,5 +1,6 @@
 import torch
 from torch import nn
+import torch.nn.functional as F
 import timm
 import vietocr.model.backbone.vgg as vgg
 from vietocr.model.backbone.resnet import Resnet50
@@ -16,11 +17,30 @@ class CNN(nn.Module):
         elif backbone == 'timm_backbone':
             # print('timm')
             self.model = timm.create_model(**kwargs)
+            self.timm_chans = self.model.feature_info.channels()
+            self.conv3 = nn.Conv2d(timm_chans[3], timm_chans[4], 1)
+            self.conv2 = nn.Conv2d(timm_chans[2], timm_chans[4], 1)
+            self.conv1 = nn.Conv2d(timm_chans[1], timm_chans[4], 1)
         self.backbone = backbone
 
     def forward(self, x):
         if self.backbone == 'timm_backbone':
-            x =  self.model.forward_features(x)
+            xs =  self.model(x)
+            xs[4] = F.interpolate(xs[4], scale_factor=8, mode='bilinear', align_corners=False)
+            
+            xs[3] = self.conv3(xs[3])
+            xs[3] = F.relu(xs[3])
+            xs[3] = F.interpolate(xs[3], scale_factor=4, mode='bilinear', align_corners=False)
+
+            xs[2] = self.conv2(xs[2])
+            xs[2] = F.relu(xs[2])
+            xs[2] = F.interpolate(xs[2], scale_factor=2, mode='bilinear', align_corners=False)
+
+            xs[1] = self.conv1(xs[1])
+            xs[1] = F.relu(xs[1])
+
+            x = xs[1]+xs[2]+xs[3]
+            
             x = x.transpose(-1, -2)
             x = x.flatten(2)
             x = x.permute(-1, 0, 1)
