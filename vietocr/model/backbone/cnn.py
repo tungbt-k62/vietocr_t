@@ -18,9 +18,9 @@ class CNN(nn.Module):
             # print('timm')
             self.model = timm.create_model(**kwargs)
             self.timm_chans = self.model.feature_info.channels()
-            self.conv3 = nn.Conv2d(timm_chans[3], timm_chans[4], 1)
-            self.conv2 = nn.Conv2d(timm_chans[2], timm_chans[4], 1)
-            self.conv1 = nn.Conv2d(timm_chans[1], timm_chans[4], 1)
+            self.conv3 = nn.Conv2d(self.timm_chans[3], self.timm_chans[4], 1)
+            self.conv2 = nn.Conv2d(self.timm_chans[2], self.timm_chans[4], 1)
+            self.conv1 = nn.Conv2d(self.timm_chans[1], self.timm_chans[4], 1)
         self.backbone = backbone
 
     def forward(self, x):
@@ -56,4 +56,3 @@ class CNN(nn.Module):
     def unfreeze(self):
         for param in self.model.features.parameters():
             param.requires_grad = True
-
