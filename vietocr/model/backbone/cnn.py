@@ -20,7 +20,11 @@ class CNN(nn.Module):
 
     def forward(self, x):
         if self.backbone == 'timm_backbone':
-            return self.model.forward_features(x)
+            x =  self.model.forward_features(x)
+            x = x.transpose(-1, -2)
+            x = x.flatten(2)
+            x = x.permute(-1, 0, 1)
+            return x
         else:
             return self.model(x)
 
