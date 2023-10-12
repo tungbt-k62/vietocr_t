@@ -18,14 +18,17 @@ class CNN(nn.Module):
             # print('timm')
             self.model = timm.create_model(**kwargs)
             self.timm_chans = self.model.feature_info.channels()
-            self.conv3 = nn.Conv2d(self.timm_chans[3], self.timm_chans[4], 1)
-            self.conv2 = nn.Conv2d(self.timm_chans[2], self.timm_chans[4], 1)
+            self.conv4 = nn.Conv2d(self.timm_chans[4], 256, 1)
+            self.conv3 = nn.Conv2d(self.timm_chans[3], 256, 1)
+            self.conv2 = nn.Conv2d(self.timm_chans[2], 256, 1)
             # self.conv1 = nn.Conv2d(self.timm_chans[1], self.timm_chans[4], 1)
         self.backbone = backbone
 
     def forward(self, x):
         if self.backbone == 'timm_backbone':
             xs =  self.model(x)
+            xs[4] = self.conv4(xs[4])
+            xs[4] = F.relu(xs[4])
             xs[4] = F.interpolate(xs[4], size=xs[2].shape[2:], mode='bilinear', align_corners=False)
             
             xs[3] = self.conv3(xs[3])
