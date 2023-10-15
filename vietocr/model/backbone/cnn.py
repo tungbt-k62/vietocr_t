@@ -47,7 +47,7 @@ class CNN(nn.Module):
             x['feat3'] = xs[3]
             x['feat4'] = xs[4]
             x = self.fpn(x)
-            x = x['feat2']
+            x = x['feat2'] + F.interpolate(x['feat3'], size=x['feat2'].shape[2:], mode='bilinear', align_corners=False) + F.interpolate(x['feat4'], size=x['feat2'].shape[2:], mode='bilinear', align_corners=False)
 
             x = x.transpose(-1, -2)
             x = x.flatten(2)
