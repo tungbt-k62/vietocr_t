@@ -22,7 +22,7 @@ class ImgAugTransform:
         # sometimes(iaa.Solarize(0.5, threshold=(32, 128))),
         # sometimes(iaa.Dropout2d(p=0.5)),
         sometimes(iaa.Multiply((0.8, 1.2))),
-        sometimes(iaa.Add((-40, 40), per_channel=0.5)),
+        sometimes(iaa.Add((-40, 40))),
 
         sometimes(iaa.JpegCompression(compression=(5, 80))),
         
